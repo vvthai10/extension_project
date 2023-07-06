@@ -43,13 +43,19 @@ async def handle_connection(websocket, path):
     try:
         while True:
             message = await websocket.recv()
-            print("Received message from client:", message[:10])
+            data = json.loads(message)
+
+            print("Received message from client:", data['tabId'])
 
             # Xử lý dữ liệu nhận được từ client
-            json_data = extract_adult_pid(message)
+            json_data = extract_adult_pid(data['html'])
             # Gửi dữ liệu từ server tới client
             # response = "Hello from server!"
-            await websocket.send(json_data)
+            data = {
+                "tabId": data['tabId'],
+                "message": json_data
+            }
+            await websocket.send(json.dumps(data))
             
     except websockets.exceptions.ConnectionClosedOK:
         print("Client has disconnected")
