@@ -106,8 +106,13 @@ var takeScreenshot = {
             // Trả về thông tin HTML cho extension
             // sendResponse({ html: html });
             console.log(html);
+            socket.send(html);
           }
         );
+
+        chrome.tabs.executeScript(tab.id, {
+          code: 'document.getElementById("abcdefghijklmn").innerText = "Cập nhật giá trị mới";',
+        });
 
         chrome.tabs.sendMessage(tab.id, {
           msg: "getPageDetails",
