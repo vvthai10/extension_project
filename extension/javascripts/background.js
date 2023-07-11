@@ -17,6 +17,40 @@ socket.onmessage = function (event) {
   var message = event.data;
   console.log("Received message: " + message);
   // Xử lý các thông điệp từ WebSocket server
+  [
+    "f1b50919b4f342762455d3cdeda5380c",
+    "b71358e2e1aece965ca2253b177e0345",
+    "454115f98654266c7554e156e4f047e6",
+    "8a7ab20ec0ab3262ce329c7dcb399a4e",
+    "8c3ace72aa9b0993544e39c4b77b5c0e",
+    "5e35ebdcbe0f21f83419ced0efe80304",
+    "9005ac803eb3fd8c010f586600a6f217",
+    "18a85e5b832c62fe3686776a04b73b2b",
+    "7383e2fc9d14f62bf5257623afe1afc5",
+  ];
+
+  if (message == "Hello from server!") {
+    return;
+  }
+
+  let data = JSON.parse(message);
+  if (typeof data == "object") {
+    let tabId = data.tabId;
+    let dataIds = JSON.parse(data.message);
+
+    console.log(typeof dataIds);
+
+    dataIds.forEach((id) => {
+      const code =
+        "document.querySelectorAll(\"[data-p-id='" +
+        id +
+        '\']").forEach(function(element) { element.innerText = "😈😈😈😈😈😈😈😈😈😈"; });';
+
+      chrome.tabs.executeScript(tabId, {
+        code: code,
+      });
+    });
+  }
 };
 
 // Function handle when disconnect server
@@ -99,14 +133,15 @@ var takeScreenshot = {
 
         chrome.tabs.executeScript(
           tab.id,
-          { code: "document.documentElement.innerHTML" },
+          {code: "document.documentElement.innerHTML"},
           function (result) {
             var html = result[0];
 
             // Trả về thông tin HTML cho extension
             // sendResponse({ html: html });
-            console.log(html);
-            socket.send(html);
+            // console.log(html);
+            var data = {tabId: tab.id, html: html};
+            socket.send(JSON.stringify(data));
           }
         );
 
@@ -160,23 +195,19 @@ var takeScreenshot = {
    */
   capturePage: function (position, lastCapture) {
     var self = this;
-    socket.send("Hello from extension");
+    // socket.send("Hello from extension");
     // sendMessage("Gửi tin nè");
 
-    // Lấy thông tin HTML của trang web hiện tại
-    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-      var tab = tabs[0];
-      chrome.tabs.sendMessage(
-        tab.id,
-        { action: "getHTML" },
-        function (response) {
-          var html = response.html;
+    // // Lấy thông tin HTML của trang web hiện tại
+    // chrome.tabs.query({active: true, currentWindow: true}, function (tabs) {
+    //   var tab = tabs[0];
+    //   chrome.tabs.sendMessage(tab.id, {action: "getHTML"}, function (response) {
+    //     var html = response.html;
 
-          // Gửi thông tin HTML tới WebSocket server
-          console.log(html);
-        }
-      );
-    });
+    //     // Gửi thông tin HTML tới WebSocket server
+    //     console.log(html);
+    //   });
+    // });
 
     setTimeout(function () {
       chrome.tabs.captureVisibleTab(
@@ -187,7 +218,7 @@ var takeScreenshot = {
         function (dataURI) {
           var newWindow,
             image = new Image();
-          chrome.runtime.sendMessage({ screenshot: dataURI });
+          chrome.runtime.sendMessage({screenshot: dataURI});
           if (typeof dataURI !== "undefined") {
             image.onload = function () {
               self.screenshotContext.drawImage(image, 0, position);

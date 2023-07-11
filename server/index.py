@@ -44,6 +44,7 @@ async def handle_connection(websocket, path):
         while True:
             message = await websocket.recv()
             data = json.loads(message)
+            
 
             print("Received message from client:", data['tabId'])
 
