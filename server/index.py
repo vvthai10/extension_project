@@ -7,6 +7,7 @@ import asyncio
 import websockets
 import transformers
 from bs4 import BeautifulSoup
+import pickle as pkl
 
 basic_labels = ['romantic love' ,'daily talk', 'complaint', 'sarcasm', 'humor', 'anger', 'sadness', 'joy', 'fear', 'surprise', 'disgust', 'curiosity', 'other']
 pipe = transformers.pipeline("zero-shot-classification", model="facebook/bart-large-mnli", topk=None)
