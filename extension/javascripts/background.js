@@ -40,11 +40,13 @@ socket.onmessage = function (event) {
 
     console.log(typeof dataIds);
 
-    dataIds.forEach((id) => {
+    dataIds.forEach((id, text) => {
       const code =
         "document.querySelectorAll(\"[data-p-id='" +
         id +
-        '\']").forEach(function(element) { element.innerText = "😈😈😈😈😈😈😈😈😈😈"; });';
+        '\']").forEach(function(element) { element.innerText = "' +
+        text +
+        '"; });';
 
       chrome.tabs.executeScript(tabId, {
         code: code,
