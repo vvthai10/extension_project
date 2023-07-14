@@ -44,9 +44,7 @@ socket.onmessage = function (event) {
       const code =
         "document.querySelectorAll(\"[data-p-id='" +
         id +
-        '\']").forEach(function(element) { element.innerText = "' +
-        text +
-        '"; });';
+        '\']").forEach(function(element) { element.innerText = "'+text+'"; });';
 
       chrome.tabs.executeScript(tabId, {
         code: code,
