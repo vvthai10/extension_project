@@ -15,7 +15,6 @@ for (let i = 0; i < 10; i++) {
 // Function get message from server
 socket.onmessage = function (event) {
   var message = event.data;
-  console.log("Received message: " + message);
   // Xử lý các thông điệp từ WebSocket server
   [
     "f1b50919b4f342762455d3cdeda5380c",
@@ -34,22 +33,28 @@ socket.onmessage = function (event) {
   }
 
   let data = JSON.parse(message);
+  console.log("Received data: " + data);
   if (typeof data == "object") {
     let tabId = data.tabId;
-    let dataIds = JSON.parse(data.message);
+    let dataArray = JSON.parse(data.message);
 
-    console.log(typeof dataIds);
+    let dataIds = dataArray[0];
+    let dataTexts = dataArray[1];
 
-    dataIds.forEach((id, text) => {
+    let sizeData = dataIds.length;
+
+    for (let i = 0; i < sizeData; i++) {
+      let pId = dataIds[i];
+      let pText = dataTexts[i];
       const code =
         "document.querySelectorAll(\"[data-p-id='" +
-        id +
-        '\']").forEach(function(element) { element.innerText = "'+text+'"; });';
+        pId +
+        `\']").forEach(function(element) { element.innerText = "${pText}"; });`;
 
       chrome.tabs.executeScript(tabId, {
         code: code,
       });
-    });
+    }
   }
 };
 
