@@ -46,8 +46,10 @@ def change_text(input: str):
         output += 'X'
     return output
 
-def match_label(text: str, target_label: str, threshold = 0.5):
+def match_label(text: str, target_label: str, threshold = 0.8):
     global pipe        
+    if not contain_a_z(text):
+        return False
     output = pipe(text, target_label, multi_label=False)            
     if output['scores'][0] >= threshold:        
         return True
@@ -113,7 +115,7 @@ def find_label_index(range_queue: list, text_list:list, label: str):
             if match_label(current_text, label):
                 range_queue.append((low, mid))
             # do like so with the second half            
-            current_text = '' 
+            current_text = ''
             for index in range(mid + 1, high + 1):
                 current_text += text_list[index]
             if match_label(current_text, label):

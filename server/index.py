@@ -51,15 +51,12 @@ async def handle_connection(websocket, path):
             data = {
                 "tabId": data['tabId'],
                 "message": json_data
-            }
-            # DEBUG
-            print('Send data to client: ', data)
+            }                        
             await websocket.send(json.dumps(data))
             
     except websockets.exceptions.ConnectionClosedOK:
         print("Client has disconnected")
-#DEBUG 
-print('ready to connect to client')
+
 start_server = websockets.serve(handle_connection, "localhost", 8082)
 
 asyncio.get_event_loop().run_until_complete(start_server)

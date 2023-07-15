@@ -161,23 +161,23 @@ var takeScreenshot = {
     );
 
     // handle chrome requests
-    chrome.runtime.onMessage.addListener(
-      function (request, sender, callback) {
-        if (request.msg === "setPageDetails") {
-          this.size = request.size;
-          this.scrollBy = request.scrollBy;
-          this.originalParams = request.originalParams;
+    // chrome.runtime.onMessage.addListener(
+    //   function (request, sender, callback) {
+    //     if (request.msg === "setPageDetails") {
+    //       this.size = request.size;
+    //       this.scrollBy = request.scrollBy;
+    //       this.originalParams = request.originalParams;
 
-          // set width & height of canvas element
-          this.screenshotCanvas.width = this.size.width;
-          this.screenshotCanvas.height = this.size.height;
+    //       // set width & height of canvas element
+    //       this.screenshotCanvas.width = this.size.width;
+    //       this.screenshotCanvas.height = this.size.height;
 
-          this.scrollTo(0);
-        } else if (request.msg === "capturePage") {
-          this.capturePage(request.position, request.lastCapture);
-        }
-      }.bind(this)
-    );
+    //       this.scrollTo(0);
+    //     } else if (request.msg === "capturePage") {
+    //       this.capturePage(request.position, request.lastCapture);
+    //     }
+    //   }.bind(this)
+    // );
   },
 
   /**
@@ -214,50 +214,50 @@ var takeScreenshot = {
     //   });
     // });
 
-    setTimeout(function () {
-      chrome.tabs.captureVisibleTab(
-        null,
-        {
-          format: "png",
-        },
-        function (dataURI) {
-          var newWindow,
-            image = new Image();
-          chrome.runtime.sendMessage({screenshot: dataURI});
-          if (typeof dataURI !== "undefined") {
-            image.onload = function () {
-              self.screenshotContext.drawImage(image, 0, position);
+    // setTimeout(function () {
+    //   chrome.tabs.captureVisibleTab(
+    //     null,
+    //     {
+    //       format: "png",
+    //     },
+    //     function (dataURI) {
+    //       var newWindow,
+    //         image = new Image();
+    //       chrome.runtime.sendMessage({screenshot: dataURI});
+    //       if (typeof dataURI !== "undefined") {
+    //         image.onload = function () {
+    //           self.screenshotContext.drawImage(image, 0, position);
 
-              if (lastCapture) {
-                self.resetPage();
-                newWindow = window.open();
-                newWindow.document.write(
-                  "<style type='text/css'>body {margin: 0;}</style>"
-                );
-                newWindow.document.write(
-                  "<img src='" +
-                    self.screenshotCanvas.toDataURL("image/png") +
-                    "'/>"
-                );
-              } else {
-                self.scrollTo(position + self.scrollBy);
-              }
-            };
+    //           if (lastCapture) {
+    //             self.resetPage();
+    //             newWindow = window.open();
+    //             newWindow.document.write(
+    //               "<style type='text/css'>body {margin: 0;}</style>"
+    //             );
+    //             newWindow.document.write(
+    //               "<img src='" +
+    //                 self.screenshotCanvas.toDataURL("image/png") +
+    //                 "'/>"
+    //             );
+    //           } else {
+    //             self.scrollTo(position + self.scrollBy);
+    //           }
+    //         };
 
-            image.src = dataURI;
-            chrome.tabs.sendMessage(self.tabId, {
-              msg: "screenshot",
-              originalParams: dataURI,
-            });
-          } else {
-            chrome.tabs.sendMessage(self.tabId, {
-              msg: "showError",
-              originalParams: self.originalParams,
-            });
-          }
-        }
-      );
-    }, 100);
+    //         image.src = dataURI;
+    //         chrome.tabs.sendMessage(self.tabId, {
+    //           msg: "screenshot",
+    //           originalParams: dataURI,
+    //         });
+    //       } else {
+    //         chrome.tabs.sendMessage(self.tabId, {
+    //           msg: "showError",
+    //           originalParams: self.originalParams,
+    //         });
+    //       }
+    //     }
+    //   );
+    // }, 100);
   },
 
   /**
